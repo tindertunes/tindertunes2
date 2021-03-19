@@ -35,6 +35,11 @@
 		6C3E913726033C7600FB0F63 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3E913626033C7600FB0F63 /* Extensions.swift */; };
 		6C7B45902603EC96009A4996 /* AuthResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C7B458F2603EC96009A4996 /* AuthResponse.swift */; };
 		6C7B4595260417FE009A4996 /* SettingsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C7B4594260417FE009A4996 /* SettingsModels.swift */; };
+		6CBDCF702604319A0071B400 /* NewReleasesResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBDCF6F2604319A0071B400 /* NewReleasesResponse.swift */; };
+		6CBDCF752604325D0071B400 /* APIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBDCF742604325D0071B400 /* APIImage.swift */; };
+		6CBDCF7D260434F20071B400 /* FeaturedPlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBDCF7C260434F20071B400 /* FeaturedPlaylistsResponse.swift */; };
+		6CBDCF82260446F90071B400 /* TrackCardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBDCF81260446F90071B400 /* TrackCardCollectionViewCell.swift */; };
+		6CBDCF8B26044D190071B400 /* NewReleasesCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CBDCF8A26044D190071B400 /* NewReleasesCellViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +94,11 @@
 		6C3E913626033C7600FB0F63 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6C7B458F2603EC96009A4996 /* AuthResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthResponse.swift; sourceTree = "<group>"; };
 		6C7B4594260417FE009A4996 /* SettingsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModels.swift; sourceTree = "<group>"; };
+		6CBDCF6F2604319A0071B400 /* NewReleasesResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewReleasesResponse.swift; sourceTree = "<group>"; };
+		6CBDCF742604325D0071B400 /* APIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIImage.swift; sourceTree = "<group>"; };
+		6CBDCF7C260434F20071B400 /* FeaturedPlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedPlaylistsResponse.swift; sourceTree = "<group>"; };
+		6CBDCF81260446F90071B400 /* TrackCardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCardCollectionViewCell.swift; sourceTree = "<group>"; };
+		6CBDCF8A26044D190071B400 /* NewReleasesCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewReleasesCellViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +196,9 @@
 				6C3E913126032E0B00FB0F63 /* UserProfile.swift */,
 				6C7B458F2603EC96009A4996 /* AuthResponse.swift */,
 				6C7B4594260417FE009A4996 /* SettingsModels.swift */,
+				6CBDCF6F2604319A0071B400 /* NewReleasesResponse.swift */,
+				6CBDCF742604325D0071B400 /* APIImage.swift */,
+				6CBDCF7C260434F20071B400 /* FeaturedPlaylistsResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -231,6 +244,8 @@
 		6C3E90D826032B7900FB0F63 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				6CBDCF81260446F90071B400 /* TrackCardCollectionViewCell.swift */,
+				6CBDCF8A26044D190071B400 /* NewReleasesCellViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -397,14 +412,18 @@
 				6C3E90F626032D2B00FB0F63 /* WelcomeViewController.swift in Sources */,
 				6C3E910026032D4400FB0F63 /* ProfileViewController.swift in Sources */,
 				6C3E90DD26032CB100FB0F63 /* TabBarViewController.swift in Sources */,
+				6CBDCF8B26044D190071B400 /* NewReleasesCellViewModel.swift in Sources */,
 				6C3E911E26032DCA00FB0F63 /* HapticsManager.swift in Sources */,
 				6C7B45902603EC96009A4996 /* AuthResponse.swift in Sources */,
+				6CBDCF702604319A0071B400 /* NewReleasesResponse.swift in Sources */,
+				6CBDCF752604325D0071B400 /* APIImage.swift in Sources */,
 				6C3E912826032DF800FB0F63 /* AudioTrack.swift in Sources */,
 				6C3E909C26032ACA00FB0F63 /* HomeViewController.swift in Sources */,
 				6C3E90F126032D2000FB0F63 /* AuthViewController.swift in Sources */,
 				6C3E909826032ACA00FB0F63 /* AppDelegate.swift in Sources */,
 				6C3E913226032E0B00FB0F63 /* UserProfile.swift in Sources */,
 				6C3E913726033C7600FB0F63 /* Extensions.swift in Sources */,
+				6CBDCF82260446F90071B400 /* TrackCardCollectionViewCell.swift in Sources */,
 				6C3E90EA26032CEC00FB0F63 /* LibraryViewController.swift in Sources */,
 				6C3E912D26032DFE00FB0F63 /* Artist.swift in Sources */,
 				6C7B4595260417FE009A4996 /* SettingsModels.swift in Sources */,
@@ -412,6 +431,7 @@
 				6C3E909A26032ACA00FB0F63 /* SceneDelegate.swift in Sources */,
 				6C3E910526032D5400FB0F63 /* PlayerViewController.swift in Sources */,
 				6C3E911926032DB900FB0F63 /* APICaller.swift in Sources */,
+				6CBDCF7D260434F20071B400 /* FeaturedPlaylistsResponse.swift in Sources */,
 				6C3E90FB26032D3700FB0F63 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
