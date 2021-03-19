@@ -42,6 +42,103 @@ final class APICaller {
         }
     }
     
+    
+    public func getNewReleases(completion: @escaping ((Result<NewReleasesResponse, Error>)) -> Void){
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/new-releases?limit=50"), type: .GET){ request in
+            let task = URLSession.shared.dataTask(with: request){ data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(NewReleasesResponse.self, from: data)
+                    completion(.success(result))
+                }
+                catch{
+                    completion(.failure(error))
+                }
+                
+            }
+            task.resume()
+        }
+        
+    }
+    
+    
+    public func getFeaturedPlaylists(completion: @escaping ((Result<FeaturedPlaylistsResponse, Error>) -> Void)){
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/featured-playlists?limit=20"), type: HTTPMethod.GET){ request in
+            let task = URLSession.shared.dataTask(with: request){ data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+//                    let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                    let result = try JSONDecoder().decode(FeaturedPlaylistsResponse.self, from: data)
+                    completion(.success(result))
+                }
+                catch{
+                    completion(.failure(error))
+                }
+                
+            }
+            task.resume()
+        }
+    }
+    
+    public func getUserTopTracks(completion: @escaping ((Result<UserTopResponse, Error>)) -> Void){
+                createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=20"), type: .GET){ request in
+                    print(Constants.baseAPIURL + "/me/top/tracks")
+                    let task = URLSession.shared.dataTask(with: request){ data, _, error in
+                        guard let data = data, error == nil else {
+                            print("nada")
+                            completion(.failure(APIError.failedToGetData))
+                            return
+                        }
+                        
+                        do {
+//                            let json =  try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                            
+                            let result = try JSONDecoder().decode(UserTopResponse.self, from: data)
+                            completion(.success(result))
+                        }
+                        catch{
+                            print("failed")
+                            completion(.failure(error))
+                        }
+                        
+                    }
+                    task.resume()
+                }
+                
+    }
+    
+//    public func getRecommendations(completion: @escaping ((Result<String, Error>) -> Void)){
+//        createRequest(with: URL(string: Constants.baseAPIURL + "/recommendations"), type: .GET){ request in
+//            let task = URLSession.shared.dataTask(with: request){ data, _, error in
+//                guard let data = data, error == nil else {
+//                    completion(.failure(APIError.failedToGetData))
+//                    return
+//                }
+//                
+//                do {
+//                    let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+////                    let result = try JSONDecoder().decode(FeaturedPlaylistsResponse.self, from: data)
+//                    print(json)
+////                    completion(.success(result))
+//                }
+//                catch{
+//                    completion(.failure(error))
+//                }
+//                
+//            }
+//            task.resume()
+//        }
+//    }
+    
+    //MARK: - Private
     enum HTTPMethod: String{
         case GET
         case POST
