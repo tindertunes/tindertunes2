@@ -8,8 +8,7 @@
 import UIKit
 
 enum BrowseSectionType{
-    case newReleases(viewModels: [NewReleasesCellViewModel])
-    case featuredPlaylists
+    case userTopTracks(viewModels:[UserTopTracksCellViewModel])
     
 }
 
@@ -33,7 +32,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        title = "Swipe"
+        title = "Playlist Creation"
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "gear"),
@@ -56,7 +55,7 @@ class HomeViewController: UIViewController {
     private func configureCollectionView(){
         view.addSubview(collectionView)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-//        collectionView.register(NewReleasesCellViewModel.self, forCellWithReuseIdentifier: NewReleasesCellViewModel.identifier)
+        collectionView.register(UserTopTracksCollectionViewCell.self, forCellWithReuseIdentifier: UserTopTracksCollectionViewCell.identifier)
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.backgroundColor = .systemBackground
@@ -64,15 +63,49 @@ class HomeViewController: UIViewController {
     
 
     
-
-    
     private func fetchData(){
+        let group = DispatchGroup()
+        group.enter()
         
-        //new releases
+        var userTopTracks: UserTopResponse?
+
         
-        //featured playlists
+        //user top trakcs
+        APICaller.shared.getUserTopTracks{ result in
+            defer{
+                group.leave()
+            }
+            switch result{
+            case .success(let model):
+                userTopTracks = model
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+        
+        group.notify(queue: .main){
+            guard let topTracks = userTopTracks?.items else{
+                fatalError("Models are nil")
+                return
+            }
+//            ,
+//            let topTracks = userTopTracks?.items
+            
+            self.configureModels(userTopTracks: topTracks) //, userTopTracks: topTracks
+            
+        }
+        
+
+    }
     
-        sections.append(.newReleases(viewModels: []))
+    private func configureModels(
+        userTopTracks: [AudioTrack]
+    ){
+        //configure stuff - APPENDS SONGS AND WHATEVER TO THE SECTIONS LIST (of enums)
+        sections.append(.userTopTracks(viewModels: userTopTracks.compactMap({
+            return UserTopTracksCellViewModel(trackName: $0.name, artistName: $0.artists.first?.name ?? "-", duration_ms: $0.duration_ms)
+        })))
+        collectionView.reloadData()
     }
 
     @objc func didTapSettings(){
@@ -88,29 +121,35 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        let type = sections[section]
+        switch type {
+        case .userTopTracks(let viewModels):
+            return viewModels.count
+        }
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return sections.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        if indexPath.section == 0{
-            cell.backgroundColor = .systemGreen
-        }
-        else if indexPath.section == 1{
-            cell.backgroundColor = .systemBlue
+        let type = sections[indexPath.section]
+        switch type {
+        case .userTopTracks(let viewModels):
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserTopTracksCollectionViewCell.identifier, for: indexPath) as? UserTopTracksCollectionViewCell else{
+                return UICollectionViewCell()
+            }
+            cell.configure(with: viewModels[indexPath.row])
+            cell.backgroundColor = .yellow
+            return cell
         }
         
-        return cell
+
     }
     
     static func createSectionLayout(section: Int) -> NSCollectionLayoutSection{
         switch section{
         case 0:
-            //Item
             let item = NSCollectionLayoutItem(
                 layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
@@ -120,23 +159,15 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             item.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
             
-            //vertical group in horizontal group
-            let verticalGroup = NSCollectionLayoutGroup.vertical(
+            let group = NSCollectionLayoutGroup.vertical(
                 layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
                     heightDimension: .absolute(390)),
                 subitem: item,
                 count: 3)
-            let horizontalGroup = NSCollectionLayoutGroup.horizontal(
-                layoutSize: NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(0.9),
-                    heightDimension: .absolute(390)),
-                subitem: verticalGroup,
-                count: 1)
             
             //Section
-            let section = NSCollectionLayoutSection(group: horizontalGroup)
-            section.orthogonalScrollingBehavior = .groupPaging
+            let section = NSCollectionLayoutSection(group: group)
             return section
         case 1:
             //Item
@@ -171,7 +202,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             let item = NSCollectionLayoutItem(
                 layoutSize: NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
-                    heightDimension: .fractionalHeight(1.0)
+                    heightDimension: .fractionalHeight(0.7)
                 )
             )
             
@@ -182,7 +213,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                     widthDimension: .fractionalWidth(1.0),
                     heightDimension: .absolute(390)),
                 subitem: item,
-                count: 1)
+                count: 3)
             
             //Section
             let section = NSCollectionLayoutSection(group: group)
@@ -191,47 +222,3 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
 }
 
-
-
-
-//        let collectionView = UICollectionView(
-//            frame: .zero,
-//            collectionViewLayout: UICollectionViewCompositionalLayout{ sectionIndex, _ -> NSCollectionLayoutSection? in
-//                return self.createSectionLayout(index: sectionIndex)
-//        })
-
-
-
-
-//    private func configureCollectionView(){
-//        view.addSubview(collectionView)
-//        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
-//        collectionView.dataSource = self
-//        collectionView.delegate = self
-//        collectionView.backgroundColor = .systemBackground
-//    }
-    
-//    private static func createSectionLayout(section: Int) -> NSCollectionLayoutSection{
-//        //Item
-//        let item = NSCollectionLayoutItem(
-//            layoutSize: NSCollectionLayoutSize(
-//                widthDimension: .fractionalWidth(1.0),
-//                heightDimension: .absolute(120)
-//            )
-//        )
-//
-//        item.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
-//
-//        //Group
-//        let group = NSCollectionLayoutGroup.horizontal(
-//            layoutSize: NSCollectionLayoutSize(
-//                widthDimension: .fractionalWidth(1.0),
-//                heightDimension: .absolute(120)),
-//            subitem: item,
-//            count: 3)
-//
-//        //Section
-//        let section = NSCollectionLayoutSection(group: group)
-//        section.orthogonalScrollingBehavior = .continuous
-//        return section
-//    }

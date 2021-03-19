@@ -67,7 +67,7 @@ final class APICaller {
     
     
     public func getFeaturedPlaylists(completion: @escaping ((Result<FeaturedPlaylistsResponse, Error>) -> Void)){
-        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/featured-playlists?limit=2"), type: HTTPMethod.GET){ request in
+        createRequest(with: URL(string: Constants.baseAPIURL + "/browse/featured-playlists?limit=20"), type: HTTPMethod.GET){ request in
             let task = URLSession.shared.dataTask(with: request){ data, _, error in
                 guard let data = data, error == nil else {
                     completion(.failure(APIError.failedToGetData))
@@ -86,6 +86,33 @@ final class APICaller {
             }
             task.resume()
         }
+    }
+    
+    public func getUserTopTracks(completion: @escaping ((Result<UserTopResponse, Error>)) -> Void){
+                createRequest(with: URL(string: Constants.baseAPIURL + "/me/top/tracks?limit=20"), type: .GET){ request in
+                    print(Constants.baseAPIURL + "/me/top/tracks")
+                    let task = URLSession.shared.dataTask(with: request){ data, _, error in
+                        guard let data = data, error == nil else {
+                            print("nada")
+                            completion(.failure(APIError.failedToGetData))
+                            return
+                        }
+                        
+                        do {
+//                            let json =  try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                            
+                            let result = try JSONDecoder().decode(UserTopResponse.self, from: data)
+                            completion(.success(result))
+                        }
+                        catch{
+                            print("failed")
+                            completion(.failure(error))
+                        }
+                        
+                    }
+                    task.resume()
+                }
+                
     }
     
 //    public func getRecommendations(completion: @escaping ((Result<String, Error>) -> Void)){
