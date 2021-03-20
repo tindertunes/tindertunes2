@@ -69,13 +69,11 @@ class SearchViewController: UIViewController {
         }
         
         let touchPoint = gesture.location(in: collectionView)
-        print("Felt")
         guard let indexPath = collectionView.indexPathForItem(at: touchPoint), indexPath.section >= -10000 else {
             return
         }
         if indexPath.section == 0 {
             let model = newTracks[indexPath.row]
-            print(model.id)
             let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
@@ -102,7 +100,6 @@ class SearchViewController: UIViewController {
         }
         if indexPath.section == 1 {
             let model = featuredTracks[indexPath.row]
-            print(model.id)
             let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
@@ -111,8 +108,8 @@ class SearchViewController: UIViewController {
                     case .success(let model):
                         let tracks = model.items
                         for track in tracks {
-                            print(track.name)
-                            APICaller.shared.addSmallTrackToPlaylist(track: track, playlist: PlaylistName.playlist_name) { (result3) in
+                            print(track)
+                            APICaller.shared.addSmallTrackToPlaylist(track: track.track, playlist: PlaylistName.playlist_name) { (result3) in
                                     if result3 {
                                         print("Added Tracks")
                                     } else {

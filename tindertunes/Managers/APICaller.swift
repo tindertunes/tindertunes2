@@ -53,7 +53,6 @@ final class APICaller {
                 
                 do {
                     let result = try JSONDecoder().decode(NewReleasesResponse.self, from: data)
-                    print(result)
                     completion(.success(result))
                 }
                 catch{
@@ -184,9 +183,10 @@ final class APICaller {
         }
     }
     
-    public func getPlaylistTracks (playlist: String, completion: @escaping ((Result<TracksList, Error>)) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + "/playlists/\(playlist)/tracks"), type: .GET){ request in
-            print(Constants.baseAPIURL + "/playlists/\(playlist)/tracks")
+    public func getPlaylistTracks (playlist: String, completion: @escaping ((Result<PlaylistTracksList, Error>)) -> Void) {
+        createRequest(with: URL(string: Constants.baseAPIURL + "/playlists/\(playlist)/tracks?market=US"), type: .GET){ request in
+            print(Constants.baseAPIURL + "/playlists/\(playlist)/tracks?market=US")
+            print("HI")
             let task = URLSession.shared.dataTask(with: request){ data, _, error in
                 guard let data = data, error == nil else {
                     print("nada")
@@ -195,9 +195,9 @@ final class APICaller {
                 }
                 
                 do {
-    //                            let json =  try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                    
-                    let result = try JSONDecoder().decode(TracksList.self, from: data)
+                    let json =  try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                    print(json)
+                    let result = try JSONDecoder().decode(PlaylistTracksList.self, from: data)
                     completion(.success(result))
                 }
                 catch{
