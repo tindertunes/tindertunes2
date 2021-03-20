@@ -74,7 +74,7 @@ class SearchViewController: UIViewController {
         }
         if indexPath.section == 0 {
             let model = newTracks[indexPath.row]
-            let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
+            let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this album to your playlist", preferredStyle: .actionSheet)
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
                 APICaller.shared.getAlbumTracks(playlist: model.id){ result in
@@ -100,7 +100,7 @@ class SearchViewController: UIViewController {
         }
         if indexPath.section == 1 {
             let model = featuredTracks[indexPath.row]
-            let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
+            let actionSheet = UIAlertController(title: model.name, message: "Would you like to add playlist this to your playlist", preferredStyle: .actionSheet)
             actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
                 APICaller.shared.getPlaylistTracks(playlist: model.id){ result in

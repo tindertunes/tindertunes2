@@ -37,7 +37,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        title = "Playlist Creation"
+        title = "Top Tracks"
         view.backgroundColor = .systemBackground
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "gear"),
@@ -45,6 +45,7 @@ class HomeViewController: UIViewController {
             target: self,
             action: #selector(didTapSettings)
         )
+        
 
         configureCollectionView()
         view.addSubview(spinner)
@@ -129,7 +130,7 @@ class HomeViewController: UIViewController {
         
         let model = tracks[indexPath.row]
         print(model)
-        let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this song to your playlist", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
             APICaller.shared.addTrackToPlaylist(track: model, playlist: PlaylistName.playlist_name) { (bool ) in
