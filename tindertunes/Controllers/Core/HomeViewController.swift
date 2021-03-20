@@ -12,8 +12,13 @@ enum BrowseSectionType{
     
 }
 
+struct PlaylistName {
+    static var playlist_name: String = ""
+}
+
 class HomeViewController: UIViewController {
 
+    private var tracks: [AudioTrack] = []
     private var collectionView: UICollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewCompositionalLayout{ sectionIndex, _ -> NSCollectionLayoutSection? in
@@ -43,13 +48,98 @@ class HomeViewController: UIViewController {
 
         configureCollectionView()
         view.addSubview(spinner)
-        fetchData()
+        let alertController = UIAlertController(title: "Playlist Name", message: "", preferredStyle: .alert)
 
+        // Add a textField to your controller, with a placeholder value & secure entry enabled
+        alertController.addTextField { textField in
+            textField.placeholder = "Enter playlist name"
+            textField.textAlignment = .center
+        }
+
+        // A cancel action
+
+        // This action handles your confirmation action
+        let confirmAction = UIAlertAction(title: "OK", style: .default) { _ in
+            if alertController.textFields?.first?.text == "" {
+                alertController.textFields?.first?.text = "TinderTunes"
+            }
+            
+            APICaller.shared.createPlaylist(with: alertController.textFields?.first?.text ?? "TinderTunes") { (result2) in
+                switch result2 {
+                case .success(let model2):
+                    print("Yes")
+                    PlaylistName.playlist_name = model2
+                case .failure(let error): print("No")
+                }
+
+            }
+        }
+
+        // Add the actions, the order here does not matter
+        alertController.addAction(confirmAction)
+        present(alertController, animated: true, completion: nil)
+//        let actionSheet = UIAlertController(title: "", message: "", preferredStyle: .alert)
+//        actionSheet.addTextField(configurationHandler: { textField in
+//            textField.placeholder = "Add playlist name"
+//        })
+//
+//        actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .cancel, handler: {_ in
+//            APICaller.shared.createPlaylist(with: actionSheet.textFields?.first) { (result2) in
+//                switch result2 {
+//                case .success(let model2):
+//                    print("Yes")
+//                    self.playlist = model2
+//                case .failure(let error): print("No")
+//                }
+//
+//            }
+//        }))
+//
+//
+//
+//        present(actionSheet, animated: true)
+        
+        fetchData()
+        addLongTapGesture()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
+    }
+    
+    private func addLongTapGesture() {
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        collectionView.isUserInteractionEnabled = true
+        collectionView.addGestureRecognizer(gesture)
+    }
+    
+    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else {
+            return
+        }
+        
+        let touchPoint = gesture.location(in: collectionView)
+        print("Felt")
+        guard let indexPath = collectionView.indexPathForItem(at: touchPoint), indexPath.section >= -10000 else {
+            return
+        }
+        print(indexPath.row)
+        
+        
+        let model = tracks[indexPath.row]
+        print(model)
+        let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
+            APICaller.shared.addTrackToPlaylist(track: model, playlist: PlaylistName.playlist_name) { (bool ) in
+                if bool {
+                    print("Successfully addded to playlist")
+                }
+            }
+        }))
+        present(actionSheet, animated: true)
+        
     }
     
     private func configureCollectionView(){
@@ -69,6 +159,18 @@ class HomeViewController: UIViewController {
         
         var userTopTracks: UserTopResponse?
 
+        
+        
+        
+//        APICaller.shared.addTrackToPlaylist(track: track, playlist: model2) { (result3) in
+//            if result3 {
+//                print("Added Tracks")
+//            } else {
+//                print("Failed to add Tracks")
+//            }
+//
+//        }
+        
         
         //user top trakcs
         APICaller.shared.getUserTopTracks{ result in
@@ -101,6 +203,7 @@ class HomeViewController: UIViewController {
     private func configureModels(
         userTopTracks: [AudioTrack]
     ){
+        tracks = userTopTracks
         //configure stuff - APPENDS SONGS AND WHATEVER TO THE SECTIONS LIST (of enums)
         sections.append(.userTopTracks(viewModels: userTopTracks.compactMap({
             return UserTopTracksCellViewModel(trackName: $0.name, artistName: $0.artists.first?.name ?? "-", duration_ms: $0.duration_ms)

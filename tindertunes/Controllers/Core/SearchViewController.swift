@@ -16,6 +16,9 @@ enum TrendingSectionType{
 
 class SearchViewController: UIViewController {
 
+    private var newTracks: [Album] = []
+    private var featuredTracks: [Playlist] = []
+    
     private var collectionView: UICollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewCompositionalLayout{ sectionIndex, _ -> NSCollectionLayoutSection? in
@@ -46,12 +49,85 @@ class SearchViewController: UIViewController {
         configureCollectionView()
         view.addSubview(spinner)
         fetchData()
-
+        addLongTapGesture()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
+    }
+    
+    private func addLongTapGesture() {
+        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        collectionView.isUserInteractionEnabled = true
+        collectionView.addGestureRecognizer(gesture)
+    }
+    
+    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else {
+            return
+        }
+        
+        let touchPoint = gesture.location(in: collectionView)
+        print("Felt")
+        guard let indexPath = collectionView.indexPathForItem(at: touchPoint), indexPath.section >= -10000 else {
+            return
+        }
+        if indexPath.section == 0 {
+            let model = newTracks[indexPath.row]
+            print(model.id)
+            let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
+            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
+                APICaller.shared.getAlbumTracks(playlist: model.id){ result in
+                    switch result {
+                    case .success(let model):
+                        let tracks = model.items
+                        for track in tracks {
+                            print(track.name)
+                            APICaller.shared.addSmallTrackToPlaylist(track: track, playlist: PlaylistName.playlist_name) { (result3) in
+                                    if result3 {
+                                        print("Added Tracks")
+                                    } else {
+                                        print("Failed to add Tracks")
+                                    }
+                                    
+                                }
+                            }
+                    case .failure(let error): break
+                    }
+                }
+            }))
+            present(actionSheet, animated: true)
+        }
+        if indexPath.section == 1 {
+            let model = featuredTracks[indexPath.row]
+            print(model.id)
+            let actionSheet = UIAlertController(title: model.name, message: "Would you like to add this to your playlist", preferredStyle: .actionSheet)
+            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            actionSheet.addAction(UIAlertAction(title: "Add to Playlist", style: .default, handler: {_ in
+                APICaller.shared.getPlaylistTracks(playlist: model.id){ result in
+                    switch result {
+                    case .success(let model):
+                        let tracks = model.items
+                        for track in tracks {
+                            print(track.name)
+                            APICaller.shared.addSmallTrackToPlaylist(track: track, playlist: PlaylistName.playlist_name) { (result3) in
+                                    if result3 {
+                                        print("Added Tracks")
+                                    } else {
+                                        print("Failed to add Tracks")
+                                    }
+                                    
+                                }
+                            }
+                    case .failure(let error): break
+                    }
+                }
+            }))
+            present(actionSheet, animated: true)
+        }
+        
     }
     
     private func configureCollectionView(){
@@ -85,6 +161,7 @@ class SearchViewController: UIViewController {
             }
             switch result{
             case .success(let model):
+                
                 newReleases = model
             case .failure(let error):
                 print(error.localizedDescription)
@@ -128,9 +205,11 @@ class SearchViewController: UIViewController {
     ){
         //configure stuff - APPENDS SONGS AND WHATEVER TO THE SECTIONS LIST (of enums)
         sections.append(.newReleases(viewModels: newAlbums.compactMap({
+            newTracks.append($0)
             return NewReleasesCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), numberOfTracks: $0.total_tracks, artistName: $0.artists.first?.name ?? "-")
         })))
         sections.append(.featuredPlaylists(viewModels: playlists.compactMap({
+            featuredTracks.append($0)
             return FeaturedPlaylistCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), creatorName: $0.owner.display_name)
         })))
         collectionView.reloadData()
