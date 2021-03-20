@@ -19,17 +19,16 @@ Tinder but for your songs. Users will swipe on songs/artists to create a playlis
 - Created Tab View filled with a Top Tracks view and a trending view
 - Users are able to create a playlist and add tracks to the playlist using haptics
 
-<img src="Walkthrough1.gif"><br>
+<img src="SignIn.gif" width=450><br>
+<img src="ChooseSongs1.gif" width=450><br>
+<img src="ChooseSongs2.gif" width=450><br>
 
 ### Progress as of February 25, 2021
 - Spotify API is connected to the app
 - Once a user logs in, they are transitioned to the swiping page
 - An app icon and a loading page have been created
 
-<img src="SignIn.gif" width=250><br>
-<img src="ChooseSongs1.gif" width=250><br>
-<img src="ChooseSongs2.gif" width=250><br>
-
+<img src="http://g.recordit.co/rRMgJWiCwQ.gif" width=250><br>
 
 ### App Evaluation
 [Evaluation of your app across the following attributes]
