@@ -26,8 +26,9 @@ Tinder but for your songs. Users will swipe on songs/artists to create a playlis
 - Once a user logs in, they are transitioned to the swiping page
 - An app icon and a loading page have been created
 
-
-<img src="http://g.recordit.co/rRMgJWiCwQ.gif" width=250><br>
+<img src="SignIn.gif" width=250><br>
+<img src="ChooseSongs1.gif" width=250><br>
+<img src="ChooseSongs2.gif" width=250><br>
 
 
 ### App Evaluation
